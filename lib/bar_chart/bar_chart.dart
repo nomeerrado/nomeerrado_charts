@@ -9,6 +9,9 @@ class BarChart extends StatelessWidget {
   final String? innerLabel;
   final Color? barColor;
   final Color? backgroundColor;
+  final TextStyle? labelStyle;
+  final bool transparentBackground;
+  final bool showInnerLabel;
 
   const BarChart({
     Key? key,
@@ -20,6 +23,9 @@ class BarChart extends StatelessWidget {
     this.innerLabel,
     this.barColor,
     this.backgroundColor,
+    this.labelStyle,
+    this.transparentBackground = true,
+    this.showInnerLabel = true,
   }) : super(key: key);
 
   @override
@@ -33,6 +39,9 @@ class BarChart extends StatelessWidget {
       barColor: barColor,
       value: value,
       innerLabel: innerLabel,
+      labelStyle: labelStyle,
+      transparentBackground: transparentBackground,
+      showInnerLabel: showInnerLabel,
     );
   }
 }
@@ -43,21 +52,27 @@ Widget _barChart({
   required double value,
   required bool percentSymbol,
   required bool border,
+  required bool transparentBackground,
+  required bool showInnerLabel,
   String? innerLabel,
   Color? barColor,
   Color? backgroundColor,
+  TextStyle? labelStyle,
 }) {
+  const defaultLabelStyle = TextStyle(fontSize: 10.0, color: Colors.white);
   final barSize = (value * boxHeight) / 100;
   return Container(
     width: barThickness,
     height: boxHeight,
-    color: backgroundColor ?? Colors.orange[100],
+    color: transparentBackground && backgroundColor == null
+        ? Colors.transparent
+        : backgroundColor ?? Colors.orange[100],
     alignment: Alignment.bottomLeft,
     child: Stack(
       children: [
         Positioned(
-          bottom: barSize > 5
-              ? value < 5
+          bottom: barSize > 10
+              ? value < 10
                   ? 0
                   : null
               : 0,
@@ -74,10 +89,10 @@ Widget _barChart({
           ),
         ),
         Positioned(
-          top: barSize > 5
-              ? value < 5
+          top: barSize > 10
+              ? value < 10
                   ? null
-                  : -5
+                  : -4.5
               : null,
           child: Container(
             width: barThickness,
@@ -85,12 +100,20 @@ Widget _barChart({
             child: FittedBox(
               fit: BoxFit.fill,
               child: Text(
-                innerLabel != null
-                    ? percentSymbol
-                        ? '$innerLabel%'
-                        : innerLabel
+                showInnerLabel
+                    ? innerLabel != null
+                        ? percentSymbol
+                            ? '$innerLabel%'
+                            : innerLabel
+                        : percentSymbol
+                            ? '${value.toStringAsFixed(0)}%'
+                            : ''
                     : '',
-                style: const TextStyle(fontSize: 10.0, color: Colors.white),
+                style: barSize > 12
+                    ? labelStyle ?? defaultLabelStyle
+                    : labelStyle != null
+                        ? labelStyle.copyWith(color: Colors.black54)
+                        : defaultLabelStyle.copyWith(color: Colors.black54),
               ),
             ),
           ),
