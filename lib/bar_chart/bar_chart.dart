@@ -12,6 +12,10 @@ class BarChart extends StatelessWidget {
   final TextStyle? labelStyle;
   final bool transparentBackground;
   final bool showInnerLabel;
+  final String? bottomLabel1;
+  final String? bottomLabel2;
+  final TextStyle? bottomLabel1Style;
+  final TextStyle? bottomLabel2Style;
 
   const BarChart({
     Key? key,
@@ -26,6 +30,10 @@ class BarChart extends StatelessWidget {
     this.labelStyle,
     this.transparentBackground = true,
     this.showInnerLabel = true,
+    this.bottomLabel1,
+    this.bottomLabel2,
+    this.bottomLabel1Style,
+    this.bottomLabel2Style,
   }) : super(key: key);
 
   @override
@@ -42,6 +50,10 @@ class BarChart extends StatelessWidget {
       labelStyle: labelStyle,
       transparentBackground: transparentBackground,
       showInnerLabel: showInnerLabel,
+      bottomLabel1: bottomLabel1,
+      bottomLabel2: bottomLabel2,
+      bottomLabel1Style: bottomLabel1Style,
+      bottomLabel2Style: bottomLabel2Style,
     );
   }
 }
@@ -58,64 +70,98 @@ Widget _barChart({
   Color? barColor,
   Color? backgroundColor,
   TextStyle? labelStyle,
+  String? bottomLabel1,
+  String? bottomLabel2,
+  TextStyle? bottomLabel1Style,
+  TextStyle? bottomLabel2Style,
 }) {
   const defaultLabelStyle = TextStyle(fontSize: 10.0, color: Colors.white);
-  final barSize = (value * boxHeight) / 100;
+  final bottomLabelHeight =
+      (bottomLabel1 != null ? 15 : 0) + (bottomLabel2 != null ? 15 : 0);
+  final barSize = (value * (boxHeight - (bottomLabelHeight))) / 100;
+
   return Container(
     width: barThickness,
-    height: boxHeight,
-    color: transparentBackground && backgroundColor == null
-        ? Colors.transparent
-        : backgroundColor ?? Colors.orange[100],
+    height: boxHeight + 16,
     alignment: Alignment.bottomLeft,
-    child: Stack(
+    child: Column(
       children: [
-        Positioned(
-          bottom: barSize > 10
-              ? value < 10
-                  ? 0
-                  : null
-              : 0,
-          child: Container(
-            height: barSize > 0 ? barSize : 0,
-            width: barThickness,
-            decoration: BoxDecoration(
-              color: barColor ?? Colors.blue,
-              border: border
-                  ? Border.all(
-                      width: 0.5, color: barColor ?? Colors.blue.shade900)
-                  : null,
-            ),
+        Container(
+          width: barThickness,
+          height: boxHeight - bottomLabelHeight,
+          color: transparentBackground && backgroundColor == null
+              ? Colors.transparent
+              : backgroundColor ?? Colors.orange[100],
+          alignment: Alignment.bottomLeft,
+          child: Stack(
+            children: [
+              Positioned(
+                bottom: barSize > 10
+                    ? value < 10
+                        ? 0
+                        : null
+                    : 0,
+                child: Container(
+                  height: barSize > 0 ? barSize : 0,
+                  width: barThickness,
+                  decoration: BoxDecoration(
+                    color: barColor ?? Colors.blue,
+                    border: border
+                        ? Border.all(
+                            width: 0.5, color: barColor ?? Colors.blue.shade900)
+                        : null,
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: showInnerLabel,
+                child: Positioned(
+                  top: barSize > 10
+                      ? value < 10
+                          ? null
+                          : -4.5
+                      : null,
+                  child: Container(
+                    width: barThickness,
+                    padding: const EdgeInsets.all(5),
+                    child: FittedBox(
+                      fit: BoxFit.fill,
+                      child: Text(
+                        showInnerLabel
+                            ? innerLabel != null
+                                ? percentSymbol
+                                    ? '$innerLabel%'
+                                    : innerLabel
+                                : percentSymbol
+                                    ? '${value.toStringAsFixed(0)}%'
+                                    : ''
+                            : '',
+                        style: barSize > 12
+                            ? labelStyle ?? defaultLabelStyle
+                            : labelStyle != null
+                                ? labelStyle.copyWith(color: Colors.black54)
+                                : defaultLabelStyle.copyWith(
+                                    color: Colors.black54),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        Positioned(
-          top: barSize > 10
-              ? value < 10
-                  ? null
-                  : -4.5
-              : null,
-          child: Container(
-            width: barThickness,
-            padding: const EdgeInsets.all(5),
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: Text(
-                showInnerLabel
-                    ? innerLabel != null
-                        ? percentSymbol
-                            ? '$innerLabel%'
-                            : innerLabel
-                        : percentSymbol
-                            ? '${value.toStringAsFixed(0)}%'
-                            : ''
-                    : '',
-                style: barSize > 12
-                    ? labelStyle ?? defaultLabelStyle
-                    : labelStyle != null
-                        ? labelStyle.copyWith(color: Colors.black54)
-                        : defaultLabelStyle.copyWith(color: Colors.black54),
-              ),
-            ),
+        Visibility(
+          visible: bottomLabel1 != null,
+          child: Text(
+            bottomLabel1 ?? '',
+            style: bottomLabel1Style,
+          ),
+        ),
+        Visibility(
+          visible: bottomLabel2 != null,
+          child: Text(
+            bottomLabel2 ?? '',
+            style: bottomLabel2Style,
           ),
         ),
       ],
