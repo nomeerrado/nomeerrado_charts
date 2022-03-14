@@ -68,8 +68,8 @@ Widget _barChart({
   bool? label2UpperSide,
 }) {
   const defaultLabelStyle = TextStyle(fontSize: 12.0, color: Colors.white);
-  final labelHeight = (label2 != null ? 25 : 0);
-  final barSize = (value * boxWidth) / 100;
+  final labelHeight = (label2 != null ? 30 : 0);
+  final barSize = ((value * (boxWidth - (showValue! ? 80 : 0))) / 100);
 
   return Container(
     width: boxWidth,
@@ -82,14 +82,14 @@ Widget _barChart({
           visible: label2 != null && label2UpperSide!,
           child: Text(
             label2 ?? '',
-            style: label2Style,
+            style: label2Style ?? defaultLabelStyle,
           ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              width: barSize - (showValue! ? 80 : 0),
+              width: barSize >= 0.0 ? barSize : 0.0,
               height: barThickness,
               decoration: BoxDecoration(
                 color: barColor ?? Colors.blue,
@@ -115,7 +115,7 @@ Widget _barChart({
           visible: label2 != null && !label2UpperSide!,
           child: Text(
             label2 ?? '',
-            style: label2Style,
+            style: label2Style ?? defaultLabelStyle,
           ),
         ),
       ],
