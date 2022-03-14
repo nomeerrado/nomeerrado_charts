@@ -77,7 +77,7 @@ Widget _barChart({
 }) {
   const defaultLabelStyle = TextStyle(fontSize: 10.0, color: Colors.white);
   final bottomLabelHeight =
-      (bottomLabel1 != null ? 15 : 0) + (bottomLabel2 != null ? 15 : 0);
+      (bottomLabel1 != null ? 25 : 0) + (bottomLabel2 != null ? 25 : 0);
   final barSize = (value * (boxHeight - (bottomLabelHeight))) / 100;
 
   return Container(
@@ -152,16 +152,22 @@ Widget _barChart({
         ),
         Visibility(
           visible: bottomLabel1 != null,
-          child: Text(
-            bottomLabel1 ?? '',
-            style: bottomLabel1Style,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: Text(
+              bottomLabel1 ?? '',
+              style: bottomLabel1Style,
+            ),
           ),
         ),
         Visibility(
           visible: bottomLabel2 != null,
-          child: Text(
-            bottomLabel2 ?? '',
-            style: bottomLabel2Style,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: Text(
+              bottomLabel2 ?? '',
+              style: bottomLabel2Style,
+            ),
           ),
         ),
       ],
