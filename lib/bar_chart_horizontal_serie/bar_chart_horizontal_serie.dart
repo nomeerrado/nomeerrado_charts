@@ -6,6 +6,7 @@ var selectedId = 0;
 class BarChartHorizontalSerie extends StatefulWidget {
   final List<BarHorizontalSerieModel> dataSet;
   final double boxWidth;
+  final double boxHeight;
   final double barThickness;
   final TextStyle? valueStyle;
   final bool? showValue;
@@ -23,6 +24,7 @@ class BarChartHorizontalSerie extends StatefulWidget {
     Key? key,
     required this.dataSet,
     this.boxWidth = 0.0,
+    this.boxHeight = 0.0,
     this.barThickness = 45.0,
     this.valueStyle,
     this.showValue = true,
@@ -61,6 +63,7 @@ class _BarChartHorizontalSerieState extends State<BarChartHorizontalSerie> {
     return _barChart(
       dataSet: widget.dataSet,
       boxWidth: widget.boxWidth,
+      boxHeight: widget.boxHeight,
       barThickness: widget.barThickness,
       border: widget.border,
       percentSymbol: widget.percentSymbol,
@@ -80,6 +83,7 @@ class _BarChartHorizontalSerieState extends State<BarChartHorizontalSerie> {
 Widget _barChart({
   required List<BarHorizontalSerieModel> dataSet,
   required double boxWidth,
+  required double boxHeight,
   required double barThickness,
   required bool border,
   required bool transparentBackground,
@@ -97,10 +101,19 @@ Widget _barChart({
   var _children = <Widget>[];
   for (var e in dataSet) {
     _chartHeight += (barThickness + 15);
+    Function() _fn = () {};
+    if (events != null && events.isNotEmpty) {
+      final ix = dataSet.indexWhere((el) => el.id == e.id);
+      if (ix > -1) {
+        _fn = events[ix];
+      }
+    }
+
     _children.add(
       GestureDetector(
-        onTap: events != null && events.isNotEmpty ? events[e.id! - 1] : null,
+        onTap: _fn,
         child: BarChartHorizontal(
+          percent: e.percent ?? 0.0,
           barColor: selectedId == e.id ? selectedColor : barColor,
           boxWidth: boxWidth,
           barThickness: barThickness,
@@ -120,5 +133,8 @@ Widget _barChart({
       ),
     );
   }
-  return SizedBox(height: _chartHeight, child: ListView(children: _children));
+  return SizedBox(
+    height: boxHeight == 0 ? _chartHeight : boxHeight,
+    child: ListView(children: _children),
+  );
 }

@@ -7,6 +7,7 @@ class BarChartHorizontal extends StatelessWidget {
   final TextStyle? valueStyle;
   final bool? showValue;
   final bool percentSymbol;
+  final double percent;
   final bool border;
   final Color? barColor;
   final Color? backgroundColor;
@@ -23,6 +24,7 @@ class BarChartHorizontal extends StatelessWidget {
     this.valueStyle,
     this.showValue = true,
     this.percentSymbol = true,
+    this.percent = 0.0,
     this.border = true,
     this.barColor,
     this.backgroundColor,
@@ -39,6 +41,7 @@ class BarChartHorizontal extends StatelessWidget {
       barThickness: barThickness,
       border: border,
       percentSymbol: percentSymbol,
+      percent: percent,
       backgroundColor: backgroundColor,
       barColor: barColor,
       value: value,
@@ -59,6 +62,7 @@ Widget _barChart({
   required bool border,
   required bool transparentBackground,
   required bool percentSymbol,
+  required double percent,
   bool? showValue,
   Color? barColor,
   Color? backgroundColor,
@@ -69,7 +73,7 @@ Widget _barChart({
 }) {
   const defaultLabelStyle = TextStyle(fontSize: 12.0, color: Colors.white);
   final labelHeight = (label2 != null ? 30 : 0);
-  final barSize = ((value * (boxWidth - (showValue! ? 80 : 0))) / 100);
+  final barSize = ((percent * (boxWidth - (showValue! ? 80 : 0))) / 100);
 
   return Container(
     width: boxWidth,
