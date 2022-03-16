@@ -17,7 +17,6 @@ class BarChartHorizontalSerie extends StatefulWidget {
   final bool transparentBackground;
   final TextStyle? label2Style;
   final bool? label2UpperSide;
-  final Function()? onTap;
   final Color? selectedColor;
 
   const BarChartHorizontalSerie({
@@ -35,7 +34,6 @@ class BarChartHorizontalSerie extends StatefulWidget {
     this.transparentBackground = true,
     this.label2Style,
     this.label2UpperSide = true,
-    this.onTap,
     this.selectedColor,
   }) : super(key: key);
 
@@ -47,19 +45,6 @@ class BarChartHorizontalSerie extends StatefulWidget {
 class _BarChartHorizontalSerieState extends State<BarChartHorizontalSerie> {
   @override
   Widget build(BuildContext context) {
-    var _events = <Function()>[];
-    if (widget.onTap != null) {
-      for (var e in widget.dataSet) {
-        assert(e.id != null);
-        _events.add(() {
-          setState(() {
-            selectedId = e.id!;
-          });
-          widget.onTap?.call();
-        });
-      }
-    }
-
     return _barChart(
       dataSet: widget.dataSet,
       boxWidth: widget.boxWidth,
@@ -74,67 +59,63 @@ class _BarChartHorizontalSerieState extends State<BarChartHorizontalSerie> {
       transparentBackground: widget.transparentBackground,
       label2Style: widget.label2Style,
       label2UpperSide: widget.label2UpperSide,
-      events: _events,
       selectedColor: widget.selectedColor,
     );
   }
-}
 
-Widget _barChart({
-  required List<BarHorizontalSerieModel> dataSet,
-  required double boxWidth,
-  required double boxHeight,
-  required double barThickness,
-  required bool border,
-  required bool transparentBackground,
-  required bool percentSymbol,
-  bool? showValue,
-  Color? barColor,
-  Color? backgroundColor,
-  TextStyle? valueStyle,
-  TextStyle? label2Style,
-  bool? label2UpperSide,
-  List<Function()>? events,
-  Color? selectedColor,
-}) {
-  var _chartHeight = 50.0;
-  var _children = <Widget>[];
-  for (var e in dataSet) {
-    _chartHeight += (barThickness + 15);
-    Function() _fn = () {};
-    if (events != null && events.isNotEmpty) {
-      final ix = dataSet.indexWhere((el) => el.id == e.id);
-      if (ix > -1) {
-        _fn = events[ix];
-      }
-    }
+  Widget _barChart({
+    required List<BarHorizontalSerieModel> dataSet,
+    required double boxWidth,
+    required double boxHeight,
+    required double barThickness,
+    required bool border,
+    required bool transparentBackground,
+    required bool percentSymbol,
+    bool? showValue,
+    Color? barColor,
+    Color? backgroundColor,
+    TextStyle? valueStyle,
+    TextStyle? label2Style,
+    bool? label2UpperSide,
+    Color? selectedColor,
+  }) {
+    var _chartHeight = 50.0;
+    var _children = <Widget>[];
+    for (var e in dataSet) {
+      _chartHeight += (barThickness + 15);
 
-    _children.add(
-      GestureDetector(
-        onTap: _fn,
-        child: BarChartHorizontal(
-          percent: e.percent ?? 0.0,
-          barColor: selectedId == e.id ? selectedColor : barColor,
-          boxWidth: boxWidth,
-          barThickness: barThickness,
-          value: e.value ?? 0.0,
-          label2: e.label ?? '',
-          label2Style: label2Style?.copyWith(
-              color: selectedId == e.id ? selectedColor : barColor),
-          valueStyle: valueStyle?.copyWith(
-              color: selectedId == e.id ? selectedColor : barColor),
-          backgroundColor: backgroundColor,
-          border: border,
-          label2UpperSide: label2UpperSide,
-          percentSymbol: percentSymbol,
-          showValue: showValue,
-          transparentBackground: transparentBackground,
+      _children.add(
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              selectedId = e.id!;
+            });
+            e.fn?.call();
+          },
+          child: BarChartHorizontal(
+            percent: e.percent ?? 0.0,
+            barColor: selectedId == e.id ? selectedColor : barColor,
+            boxWidth: boxWidth,
+            barThickness: barThickness,
+            value: e.value ?? 0.0,
+            label2: e.label ?? '',
+            label2Style: label2Style?.copyWith(
+                color: selectedId == e.id ? selectedColor : barColor),
+            valueStyle: valueStyle?.copyWith(
+                color: selectedId == e.id ? selectedColor : barColor),
+            backgroundColor: backgroundColor,
+            border: border,
+            label2UpperSide: label2UpperSide,
+            percentSymbol: percentSymbol,
+            showValue: showValue,
+            transparentBackground: transparentBackground,
+          ),
         ),
-      ),
+      );
+    }
+    return SizedBox(
+      height: boxHeight == 0 ? _chartHeight : boxHeight,
+      child: ListView(children: _children),
     );
   }
-  return SizedBox(
-    height: boxHeight == 0 ? _chartHeight : boxHeight,
-    child: ListView(children: _children),
-  );
 }
