@@ -159,7 +159,12 @@ class PieChartPainter extends CustomPainter {
           );
         }
 
-        final radius = showChartValuesOutside ? (side / 2) + 16 : side / 3;
+        final radius = _subParts[i] > 3
+            ? showChartValuesOutside
+                ? (side / 2) + 16
+                : side / 3
+            : (side / 2) + 16;
+
         final radians =
             _prevAngle + (((_totalAngle / _total) * _subParts[i]) / 2);
         final x = (radius) * math.cos(radians);
