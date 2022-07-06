@@ -14,8 +14,10 @@ class BarChart extends StatelessWidget {
   final bool showInnerLabel;
   final String? bottomLabel1;
   final String? bottomLabel2;
+  final String? bottomLabel3;
   final TextStyle? bottomLabel1Style;
   final TextStyle? bottomLabel2Style;
+  final TextStyle? bottomLabel3Style;
 
   const BarChart({
     Key? key,
@@ -32,8 +34,10 @@ class BarChart extends StatelessWidget {
     this.showInnerLabel = true,
     this.bottomLabel1,
     this.bottomLabel2,
+    this.bottomLabel3,
     this.bottomLabel1Style,
     this.bottomLabel2Style,
+    this.bottomLabel3Style,
   }) : super(key: key);
 
   @override
@@ -52,8 +56,10 @@ class BarChart extends StatelessWidget {
       showInnerLabel: showInnerLabel,
       bottomLabel1: bottomLabel1,
       bottomLabel2: bottomLabel2,
+      bottomLabel3: bottomLabel3,
       bottomLabel1Style: bottomLabel1Style,
       bottomLabel2Style: bottomLabel2Style,
+      bottomLabel3Style: bottomLabel3Style,
     );
   }
 }
@@ -72,12 +78,15 @@ Widget _barChart({
   TextStyle? labelStyle,
   String? bottomLabel1,
   String? bottomLabel2,
+  String? bottomLabel3,
   TextStyle? bottomLabel1Style,
   TextStyle? bottomLabel2Style,
+  TextStyle? bottomLabel3Style,
 }) {
   const defaultLabelStyle = TextStyle(fontSize: 10.0, color: Colors.white);
-  final bottomLabelHeight =
-      (bottomLabel1 != null ? 25 : 0) + (bottomLabel2 != null ? 25 : 0);
+  final bottomLabelHeight = (bottomLabel1 != null ? 30 : 0) +
+      (bottomLabel2 != null ? 30 : 0) +
+      (bottomLabel3 != null ? 30 : 0);
   final barSize = (value * (boxHeight - (bottomLabelHeight))) / 100;
 
   return Container(
@@ -125,7 +134,7 @@ Widget _barChart({
                     width: barThickness,
                     padding: const EdgeInsets.all(5),
                     child: FittedBox(
-                      fit: BoxFit.fill,
+                      fit: BoxFit.scaleDown,
                       child: Text(
                         showInnerLabel
                             ? innerLabel != null
@@ -153,7 +162,7 @@ Widget _barChart({
         Visibility(
           visible: bottomLabel1 != null,
           child: FittedBox(
-            fit: BoxFit.fill,
+            fit: BoxFit.scaleDown,
             child: Text(
               bottomLabel1 ?? '',
               style: bottomLabel1Style,
@@ -163,10 +172,20 @@ Widget _barChart({
         Visibility(
           visible: bottomLabel2 != null,
           child: FittedBox(
-            fit: BoxFit.fill,
+            fit: BoxFit.scaleDown,
             child: Text(
               bottomLabel2 ?? '',
               style: bottomLabel2Style,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: bottomLabel3 != null,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              bottomLabel3 ?? '',
+              style: bottomLabel3Style,
             ),
           ),
         ),

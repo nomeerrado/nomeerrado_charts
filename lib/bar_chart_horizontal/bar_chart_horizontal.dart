@@ -73,7 +73,7 @@ Widget _barChart({
 }) {
   const defaultLabelStyle = TextStyle(fontSize: 12.0, color: Colors.white);
   final labelHeight = (label2 != null ? 30 : 0);
-  final barSize = ((percent * (boxWidth - (showValue! ? 80 : 0))) / 100);
+  final barSize = ((percent * (boxWidth - (showValue! ? 100 : 0))) / 100);
 
   return Container(
     width: boxWidth,
@@ -86,6 +86,7 @@ Widget _barChart({
           visible: label2 != null && label2UpperSide!,
           child: Text(
             label2 ?? '',
+            textScaleFactor: 1.3,
             style: label2Style ?? defaultLabelStyle,
           ),
         ),
@@ -106,9 +107,10 @@ Widget _barChart({
             Visibility(
               visible: showValue,
               child: FittedBox(
-                fit: BoxFit.fill,
+                fit: BoxFit.scaleDown,
                 child: Text(
                   '$value%',
+                  textScaleFactor: 1.3,
                   style: valueStyle ?? defaultLabelStyle,
                 ),
               ),
@@ -119,6 +121,7 @@ Widget _barChart({
           visible: label2 != null && !label2UpperSide!,
           child: Text(
             label2 ?? '',
+            textScaleFactor: 1.3,
             style: label2Style ?? defaultLabelStyle,
           ),
         ),
